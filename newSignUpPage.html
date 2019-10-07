@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://kit.fontawesome.com/1b82ad1b37.js"></script>
+	<style>
+		@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+		* {
+			text-decoration:none;
+			font-family: 'Montserrat', 'sans-serif';
+			box-sizing: border-box;
+			margin:0;
+		}
+		input:focus, input:active {
+			outline: none;	
+		}
+		button:focus, button:active {
+			outline: none;	
+		}
+		a { color: inherit; } 
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: rgba(0, 0, 0, 0.152);
+			height: 100vh;
+		}
+		.outerContainer {
+			width:50%;
+			position: relative;
+			height:550px;
+			border-radius: 10px;
+			box-shadow: 0 13px 19px 1px rgba(0, 0, 0, 0.4);
+			background:white;
+			z-index: 100;
+		}
+		.returnButton {
+			position: absolute;
+			content:'';
+			text-align: center;
+			cursor: pointer;
+			line-height: 34px;
+			width: 34px;
+			height: 34px;
+			z-index: 10;
+			top: 0;
+			right: 0;
+			transform: translateX(12.5px) translateY(-12.5px);
+			transition: 0.13s all linear;
+			box-shadow: 0 0 20px -4px rgba(0, 0, 0, 0.4);
+			background: white;
+			background-image: url('imgs/X.png');
+			background-size: 37%;
+			background-repeat: no-repeat;
+			background-position: center;
+			border: 1px solid rgba(0, 0, 0, 0.1);
+			border-radius: 50%;
+		}
+		.returnButtonClicked {
+			transform: translateX(12.5px) translateY(-12.5px) scale(0.92);
+		}
+		.outerContainer:before:active, .container:before:focus { 
+			background:red;
+		}
+		.container {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			border-radius: 10px;
+			/*width:50%;
+			height:550px;
+			border-radius: 10px;
+			box-shadow: 0 13px 19px 1px rgba(0, 0, 0, 0.4);
+			background:white;*/
+			overflow:hidden;
+		}
+		.formContainer {
+			width:50%;
+			height: 100%;
+			position:absolute;
+			padding: 50px 35px 0 35px;
+			text-align:center;
+			transition: all 0.52s ease-in-out;
+		}
+		.formContainer > h1 {
+			margin-bottom: 25px;
+		}
+		form {
+			height:60%;
+			margin-bottom: 10px;
+		}
+		.inputs {
+			height: 70%;
+			margin-bottom: 30px;
+		}
+		.inputContainer:not(.checkbox) {
+			/*height:55px;*/
+			width:90%;
+			position: relative;
+			margin: 0 auto 10px auto;
+			height:43px;
+			border-bottom: 2px solid rgba(0, 0, 0, 0.35);
+			transition: all 0.21s linear;
+			/*background: rgba(0, 0, 0, 0.06);*/
+		}
+		.inputContainer:not(.checkbox).hasError {
+			/*border-bottom: 2px solid rgba(255, 0, 0, 0.5);*/
+			animation: borderBottomTurnRed 3.2s linear forwards;
+			}
+		/*.passInputContainer > input {
+			width:75%;
+			margin: 0 auto 0 0;
+		}*/
+		.designator {
+			position: absolute;
+			color: rgba(0, 0, 0, 0.335);
+			bottom: 6%;
+			left: 0;
+			padding-left: 4px;
+			font-size: 19px;
+			transition: all 0.1621s linear;
+		}
+		.designatorDisabled {
+			opacity: 0;
+		}
+		.inputContainer:focus-within > .designator {
+			color: rgba(0, 0, 0, 0.15335);
+			bottom: 70%;
+			font-size: 0.73em;
+		}
+		input[type="text"], input[type="email"], input[type="password"] {
+			height: 19px;
+			width:95%;
+			/*padding-left: 7px;*/
+			position: absolute;
+			bottom: 10%;
+			padding-left: 4px;
+			left: 0;
+			line-height:19px;
+			border:none;
+			font-size: 19px;
+			background: transparent;
+		}
+		input[type="password"] {
+			width:80%;
+		}
+		.showPassword {
+			position:absolute;
+			right:0;
+			bottom:10%;
+			height:25px;
+			width:25px;
+			visibility: hidden;			
+			cursor: pointer;
+		}
+		/*.showPassword:after {
+			position: absolute;
+			content: '';
+			height: 1.7px;
+			width:100%;
+			background: black;
+			bottom: 25%;
+			left: 0;
+			border-radius: 2px;
+			transform:rotateZ(-59deg);
+			transition: all 0.1s linear;
+		}*/
+		.upperEye {
+			width: 100%;
+			position: absolute;
+			height:60%;
+			left: 0;
+			bottom: -9%;
+			border-radius: 50%;
+			border-top: 2px solid rgba(0, 0, 0, 0.4);
+		}
+		.iris {
+			width:10px;
+			height:10px;
+			position: absolute;
+			right: 31%;
+			bottom: 4%;
+			background:radial-gradient( white, rgba(0, 0, 0, 0.74), purple, rgba(0, 0, 0, 0.5));
+			border-radius: 50%;
+			opacity: 0;
+			transition: all 0.1s linear;
+		}
+		.lowerEye {
+			width: 100%;
+			position: absolute;
+			height:60%;
+			left:0;
+			bottom: 0;
+			border-radius: 50%;
+			border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+		}
+		.showPasswordPersists {
+			visibility: visible;		
+		}
+		.showPassword:active, .showPassword:focus {
+			outline:none;
+		}
+		.showPassword:hover > .iris {
+			opacity: 1;
+		}
+		/*.showPassword:active:after {
+			opacity: 0;
+		}*/
+		button {
+			background: none;
+			border: none;
+			width:50%;
+			height:43px;
+			border-radius: 21px;
+			cursor: pointer;
+			font-weight:500;
+			color: rgba(0, 0, 0, 0.53);
+			font-size: 1.32em;
+			transition: all 0.1621s linear;
+		}
+		button:active, button:focus {
+			transform: scale(0.96);
+
+		}
+		.errorMessage {
+			position: absolute;
+			top:0;
+			right: 0;
+			font-size: 0.75em;
+			color: rgba(255, 0, 0, 0.5);
+		}
+		.providersSection > p{
+			margin-bottom: 20px;
+		}
+		.providers {
+			display:flex;
+			width:65%;
+			margin: 0 auto;
+			justify-content: space-around;
+		}
+		.signinContainer {
+			background: white;
+			z-index:1;
+		}
+		.signinContainerShiftToRight {
+			transform: translateX(100%);
+			z-index:0;
+		}
+		.signupContainer {
+			transform: translateX(100%);
+			background: white;
+			z-index: 1;
+		}
+		.signupContainerShiftToLeft {
+			transform: translateX(0);
+			z-index:0;
+		}
+		.actualProviders {
+			width:42px;
+			height:42px;
+			border:1px solid black;
+			/*padding: 10px;*/
+			text-align: center;
+			line-height: 45px;
+			border-radius: 50%;
+			display: inline-block;
+			/*display:block;*/
+		}
+
+
+		
+		.singinForm .passInputContainer {
+			position: relative;
+		}
+		.forgotPassButton {
+			position: absolute;
+			font-size: 0.8em;
+			right: 0;
+			bottom:-60%;
+			cursor: pointer;
+			text-decoration: underline;
+		}
+		.proceedSignin {
+			box-shadow: 0 0 11px -4px #eb344f;
+			color: rgba(235, 52, 79, 0.50);
+			transition: all 0.17s linear;
+		}
+		.proceedSignin:hover {
+			box-shadow: 0 0 10px -2px #eb344f;
+			color: rgba(235, 52, 79, 0.88);
+		}
+
+		
+		.mustFill > label > span {
+			color: rgba(255, 0, 0, 0.4);
+		}
+		.mustFill:focus-within > label > span {
+			opacity:0;
+		}
+		.checkbox input {
+			position: relative;
+			box-sizing: content-box;
+			-webkit-appearance: none;
+			height: 20px;
+			width: 20px;
+			border-radius: 5px;
+			border: 2px solid #c7c7c7;
+			cursor: pointer;
+			transition: all 0.16s linear;
+
+		}
+		.checkbox input:after {
+			position: absolute;
+			top:50%;
+			left:50%;
+			width: 10px;
+			height: 10px;
+			opacity: 1;
+			background: red;
+			transition: all 0.1s linear;
+		}
+		.checkbox input:checked {
+			background:#d095de;
+			border: 2px solid #a052b3;
+		}
+		.checkbox input:checked:after {
+			width: 50px;
+			height: 50px;
+			opacity: 0;
+			background: white;
+		}
+		/* .checkbox span {
+			width:22px;
+			height:22px;
+			cursor: pointer;
+			margin:0;
+			border-radius: 6px;
+			display: block;
+			border:1.5px solid black;
+			transition: all 0.18s linear;
+		}
+		.checkbox > input:checked ~ .pseudoCheckbox {
+			background:red;
+		}
+		.checkbox span:after {
+			position: absolute;
+			content:''; 
+			width:22px;
+			height:22px;
+			cursor: pointer;
+			border-radius: 6px;
+			display: block;
+			border:1.5px solid black;
+			transition: all 0.18s linear;
+		} */
+		.proceedSignup {
+			box-shadow: 0 0 11px -4px #d949f2;
+			color: rgba(217, 73, 242, 0.50);
+			transition: all 0.17s linear;
+		}
+		.proceedSignup:hover {
+			box-shadow: 0 0 10px -2px #d949f2;
+			color: rgba(217, 73, 242, 0.88);
+		}
+
+		
+		.overlayContainer {
+			width:50%;
+			/*display: none;*/
+			position: absolute;
+			height: 100%;
+			overflow: hidden;
+			z-index:2;
+			transition: all 0.2s ease-in 0s;
+		}
+		.overlayContainerOffsetRight {
+			animation: slideOverlayContainerRight 0.52s ease-in-out forwards;
+		}
+		.overlayContainerOffsetLeft {
+			animation: slideOverlayContainerLeft 0.52s ease-in-out forwards;
+		}
+		.overlay {
+			width:200%;
+			color:white;
+			height: 100%;	
+			position: relative;
+			background: linear-gradient(to left, #d949f2, #eb344f);
+		}
+		.overlayShiftToLeft {
+			animation: shiftOverlayLeft 0.52s ease-in-out forwards;
+		}
+		.overlayShiftToRight {
+			animation: shiftOverlayRight 0.52s ease-in-out forwards;
+		}
+		.overlaySection {
+			width:50%;
+			height: 100%;
+			position: absolute;
+			padding: 150px 50px;
+			display: flex;
+			flex-flow: column nowrap;
+			text-align: center;
+			transition: all 0.52s ease-in-out;               /*PROBABLY*/
+		}
+		.preSignup {
+			right: 0;
+			/*transform: translateX(100%);*/
+
+		}
+		.preSignupShiftSlightlyToRight {
+			transform: translateX(15%);
+		}
+		.preSignin {
+			/*left:50%;*/
+		}
+		.preSigninShiftSlightlyToLeft {
+			transform: translateX(-15%);
+		}
+		.switch {
+			border:1px solid white;
+			height:40px;
+			width:50%;
+			line-height: 40px;
+			border-radius: 22.5px;
+			margin: 0 auto;
+			text-transform: uppercase;
+			cursor: pointer;
+			font-weight: 700;
+			transition: all 0.1s linear;
+		}
+		.switch:focus, .switch:active {
+			transform: scale(0.96);
+		}
+
+		.overlaySection > h1 {
+			margin-bottom: 25px;
+		}
+
+		.overlaySection > p {
+			margin-bottom: 50px;
+		}
+		
+
+		/*ANIMATIONS FOR OVERLAY EFFECT*/
+
+		@keyframes slideOverlayContainerRight {
+			from {
+				left:0;
+			}to {
+				left:50%;
+			}
+		}
+
+		@keyframes slideOverlayContainerLeft {
+			to {
+				left:0;
+			}from {
+				left:50%;
+			}
+		}
+		@keyframes shiftOverlayLeft {
+			from {
+				right:0;
+			} to {
+				right:100%;
+			}
+		}
+		@keyframes shiftOverlayRight {
+			to {
+				right:0;
+			} from {
+				right:100%;
+			}
+		}
+		/*@keyframes shiftSigninFormLeft {
+			from {
+				right:0;
+			} to {
+				right:100%;
+			}
+		}
+		@keyframes shiftOverlayRight {
+			to {
+				right:0;
+			} from {
+				right:100%;
+			}
+		}*/
+		
+
+		/*ANIMATION FOR SETTING FIELD ERROR*/
+		@keyframes borderBottomTurnRed {
+			0% {
+				border:none;
+				padding-bottom: 2px;
+				background:
+			    linear-gradient(
+			      to left, 
+			     	transparent 0%,
+			     transparent 100%
+			    )
+			    left 
+			    bottom 
+			    no-repeat; 
+			  	background-size:100% 2px;
+			}
+			50% {
+                background:
+			    linear-gradient(
+			      to left, 
+			     	transparent 25%,
+			        rgba(255,0,0,0.5) 50%,
+			        rgba(255,0,0,0.5) 75%,
+			        transparent 100%
+			    )
+			    left 
+			    bottom 
+			    no-repeat; 
+			  	background-size:100% 2px;
+			}
+			100% {
+				border:none;
+				padding-bottom: 2px;
+				background:
+			    linear-gradient(
+			      to left, 
+			      rgba(255,0,0,0.5) 0%,
+			      rgba(255,0,0,0.5) 100%
+			    )
+			    left 
+			    bottom 
+			    no-repeat; 
+			  	background-size:100% 2px ;
+			}
+			
+		}
+	
+	</style>
+</head>
+<body>
+
+
+								<!-- FACEBOOK SDK -->
+	<script>
+		window.fbAsyncInit = function() {
+		  FB.init({
+			appId      : '{your-app-id}',
+			cookie     : true,
+			xfbml      : true,
+			version    : '{api-version}'
+		  });
+			
+		  FB.AppEvents.logPageView();   
+			
+		};
+	  
+		(function(d, s, id){
+		   var js, fjs = d.getElementsByTagName(s)[0];
+		   if (d.getElementById(id)) {return;}
+		   js = d.createElement(s); js.id = id;
+		   js.src = "https://connect.facebook.net/en_US/sdk.js";
+		   fjs.parentNode.insertBefore(js, fjs);
+		 }(document, 'script', 'facebook-jssdk'));
+
+		 					// CHECK FACEBOOK LOGIN STATUS
+		 
+		FB.getLoginStatus(function(response) {
+			statusChangeCallback(response);
+		});
+
+			//THE RESPONSE ABOVE CONSISTS OF THE FOLLOWING:
+			
+		// {
+		// 	status: 'connected',
+		// 	authResponse: {
+		// 		accessToken: '...',
+		// 		expiresIn:'...',
+		// 		signedRequest:'...',
+		// 		userID:'...'
+		// 	}
+		// }
+
+
+	  </script>
+	  <div id="fb-root"></div>
+	  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0&appId=612373439286919"></script>
+
+
+	
+	<div class="outerContainer">
+		<span class="returnButton"></span>
+		<div class="container">
+			<div class="formContainer signinContainer">
+				<h1>Sign in</h1>
+				<form action="" class="signinForm">
+					<div class="inputs">
+						<div class="inputContainer emailInputContainer">
+							<label class="designator">Mail address</label>
+							<input type="email" name="mail" autocomplete="off" >
+						</div>
+						<div class="inputContainer passInputContainer">
+							<label class="designator">Password</label>
+							<input type="password" name="pass" autocomplete="off" >
+							<div class="showPassword">
+								<span class="upperEye"></span>
+								<span class="iris"></span>
+								<span class="lowerEye"></span>
+							</div>
+						<span href="" class="forgotPassButton">Forgot your password?</span>
+						</div>
+					</div>
+					<button type="submit" class="proceed proceedSignin">Sign in</button>
+				</form>
+				<div class="providersSection">
+					<p>Or, continue with</p>
+					<div class="providers">
+						<a href="" class="actualProviders"><img src="imgs/facebook.png" alt=""></a>
+						<a href="" class="actualProviders"><img src="imgs/google.png" alt=""></a>
+						<a href="" class="actualProviders"><img src="imgs/twitter.png" alt=""></a>
+					</div>
+				</div>
+			</div>
+			<div class="formContainer signupContainer">
+				<h1>Create an account</h1>
+				<form action="" class="signupForm">
+					<div class="inputs">
+						<div class="inputContainer nameInputContainer">
+							<label class="designator">Your name</label>
+							<input type="text" name="name" autocomplete="off" >
+						</div>
+						<div class="inputContainer mustFill emailInputContainer">
+							<label class="designator">Mail address<span>*</span></label>
+							<input type="email" id="mail" name="mail" pattern="^([0-9]{9})|([A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3})$" title="Address must be of form anything@you.desire" autocomplete="off" required>
+						</div>
+						<div class="inputContainer mustFill passInputContainer">
+							<label class="designator">Password<span>*</span></label>
+							<input type="password" id="pass" name="pass" type="password"  minlength="6" maxlength="12" title="Password must consist of at least 1 uppercase character, 1 lowercase character and 1 digit" autocomplete="off" required>
+							<div class="showPassword">
+								<span class="upperEye"></span>
+								<span class="iris"></span>
+								<span class="lowerEye"></span>
+							</div>
+						</div>
+						<div class="inputContainer checkbox">
+							<input type="checkbox">
+							<!-- <span class="pseudoCheckbox"></span> -->
+							<label>Keep me connected</label>
+						</div>
+					</div>
+					<button type="submit" class="proceed proceedSignup">Sign up</button>
+				</form>
+				<div class="providersSection">
+					<p>Or, continue with</p>
+					<div class="providers">
+						<a href="" class="actualProviders"><img src="imgs/facebook.png" alt=""></a>
+						<a href="" class="actualProviders"><img src="imgs/google.png" alt=""></a>
+						<a href="" class="actualProviders"><img src="imgs/twitter.png" alt=""></a>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="overlayContainer">
+				<div class="overlay">
+					<div class="overlaySection preSignin">
+						<h1>Welcome Back!</h1>
+						<p class="welcomeBackGreetings">welcome back</p>
+						<div class="switch goToSignin">sign in</div>
+					</div>
+					<div class="overlaySection preSignup">
+						<h1>Hello, Guest!</h1>
+						<p class="helloGuestGreetings">do whatever you need</p>
+						<div class="switch goToSignup">sign up</div>
+					</div>
+				</div>
+			</div>
+
+			
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/6.5.0/firebase-firestore.js"></script>
+
+	<script>
+		  // Your web app's Firebase configuration
+		  var firebaseConfig = {
+		  	apiKey: "AIzaSyDFlryj0k1W3X-W1A4efUiNUDj9_LIa69g",
+		  	authDomain: "st-web-project.firebaseapp.com",
+		  	databaseURL: "https://st-web-project.firebaseio.com",
+		  	projectId: "st-web-project",
+		  	storageBucket: "",
+		  	messagingSenderId: "578787517359",
+		  	appId: "1:578787517359:web:512a0e2a93d97a7bc3c55a"
+		  };
+		  // Initialize Firebase
+		  firebase.initializeApp(firebaseConfig);
+
+
+		  const auth = firebase.auth();	
+		  const firestore = firebase.firestore();
+		  console.log(auth)
+		  // var title = $('#h1')
+		  // var dbRef = firebase.database().ref().child('h1');
+		  // dbRef.on('value', snap => title.html(snap.val()))
+	</script>
+	<script>
+		
+		$(document).ready(function() {
+
+			console.log( "doesnt exist")
+			let $returnButton = $('.returnButton');
+			let $mustFillInput = $('.mustFill > input');
+			let $signinContainer = $('.signinContainer');
+			let $signupContainer = $('.signupContainer');
+			let $signupForm = $('.signupForm');
+			let signupForm = document.querySelector('.signupContainer')      ///uncoincidentally a duplicate - for later prupoeses!!!
+			let $overlayContainer = $('.overlayContainer');
+			let $overlay = $('.overlay');
+			let $preSignin = $('.preSignin');
+			let $preSignup = $('.preSignup');
+			let $mailFieldInsideSignup = $signupContainer.find('input[type="email"]');
+			let $passwordFieldInsideSignup = $signupContainer.find('input[type="password"]');
+			let $mailFieldInsideSignin = $signinContainer.find('input[type="email"]');
+			let $passwordFieldInsideSignin = $signinContainer.find('input[type="password"]');
+			let $forgotPassButton = $signinContainer.find('.forgotPassButton');
+
+			$returnButton.on('mousedown', function() {
+				console.log("detected click on return")
+				$(this).addClass('returnButtonClicked');
+			});
+
+			$returnButton.on('mouseup', function() {
+				console.log("detected click on return")
+				$(this).removeClass('returnButtonClicked');
+			});
+			// $('.overlayContainer').addClass('overlayContainerOffsetLeft');
+			$signinContainer.addClass('signinContainerShiftToRight');
+			// $('.signupContainer').addClass('signupContainerShiftToLeft');
+
+			$('.switch').on('click', function() {
+
+				if ($(this).hasClass('goToSignup')) {
+					console.log("shifting to sign up")
+
+					$overlayContainer.removeClass('overlayContainerOffsetRight').addClass('overlayContainerOffsetLeft');
+					$overlay.removeClass('overlayShiftToLeft').addClass('overlayShiftToRight');
+					$signupContainer.removeClass('signupContainerShiftToLeft');
+					$signinContainer.addClass('signinContainerShiftToRight');
+					$preSignin.removeClass('preSigninShiftSlightlyToLeft');
+					$preSignup.addClass('preSignupShiftSlightlyToRight');
+
+
+					
+				}else {
+					console.log("shifting to sign in")
+					$overlayContainer.removeClass('overlayContainerOffsetLeft').addClass('overlayContainerOffsetRight');
+					$overlay.removeClass('overlayShiftToRight').addClass('overlayShiftToLeft');
+					$signinContainer.removeClass('signinContainerShiftToRight');
+					$signupContainer.addClass('signupContainerShiftToLeft');
+					$preSignup.removeClass('preSignupShiftSlightlyToRight');
+					$preSignin.addClass('preSigninShiftSlightlyToLeft');
+				}
+			});
+
+			
+			(function initSignUpFormSettings() {
+
+				$signupForm.attr('novalidate', true);
+
+				$('input[type="text"], input[type="email"], input[type="password"]').on('input', function() {
+					if ($.trim($(this).val()) != '') {
+						$(this).prev().addClass('designatorDisabled');
+					}else {
+						$(this).prev().removeClass('designatorDisabled');
+					}
+				
+				});
+				
+				$mustFillInput.on('input', function() {
+					if ($.trim($(this).val()) != '') {
+						$(this).parent().children().last().addClass('showPasswordPersists');
+					}else {
+						$(this).parent().children().last().removeClass('showPasswordPersists')
+					}
+				});
+
+				$('.showPassword').hover(function() {
+
+					console.log($(this).prev())
+					$(this).prev().attr('type', 'text');
+				}, function() {
+
+					console.log($(this).prev())
+					$(this).prev().attr('type', 'password');
+				});
+
+				$mustFillInput.on('focusout', function() {
+
+					let field = this;
+					let error = getValidationError(field);
+
+					if (error) {
+						showError(field, error);
+						return;
+					}
+
+					removeError(field);
+				});
+
+				$mustFillInput.on('focusin', function() {
+					if ($(this).parent().hasClass('hasError'))
+						removeError(this);
+				});
+
+				$signupForm.on('submit', function(event) {
+					// validateAllMustFields(event);
+					console.log('submitted');
+					initSignUp();
+					
+
+				});
+
+				$forgotPassButton.on('click', function(event) {
+					resetUsersPassword(event);
+				});
+			}());
+
+
+			function getValidationError(field) {
+				console.log(field);
+				var validity = field.validity;
+				console.log(validity);
+
+				if (validity.valueMissing) return "Please fill out.";
+
+				else {
+
+					if (validity.valid) return
+
+					else if (validity.valueMissing) return "Please fill out.";
+					else if (validity.typeMismatch) return 'Please use the correct input type.';
+					else if (validity.tooShort) return 'Please lengthen this text.' + field.getAttribute('minlength');
+					else if (validity.tooLong) return 'Please shorten this text.' + field.getAttribute('maxlength');
+					else if (validity.patternMismatch) {
+
+				    	if (field.hasAttribute('title')) {
+				    		return field.getAttribute('title');
+				    	}
+				    	return 'Please match the requested format.';
+				    }
+				    return 'The value you entered for this field is invalid.';
+				}
+			}
+
+			function showError(field, error) {
+
+
+				field.parentElement.classList.add('hasError');
+				let fieldId = field.name;
+
+				var errorMessage = signupForm.querySelector('.errorMessage#forField' + fieldId);
+
+				if (!errorMessage) {
+
+					errorMessage = document.createElement('div');
+					errorMessage.classList.add('errorMessage');
+					errorMessage.id = 'forField' + fieldId;
+					field.parentElement.insertBefore(errorMessage, field.sibline);
+				}
+
+				field.setAttribute('aria-describedby', 'errorFor' + fieldId);
+
+				errorMessage.innerHTML = error;
+				errorMessage.display = 'block';
+				errorMessage.visibility = 'visible';
+
+			}
+
+			function removeError(field) {
+
+				field.parentElement.classList.remove('hasError');
+				let signUpForm = document.querySelector('.signupForm');
+
+				let fieldId = field.name;
+
+				let errorMessage = signupForm.querySelector('.errorMessage#forField' + fieldId);
+				if (!errorMessage) return;
+
+				errorMessage.innerHTML = '';
+				errorMessage.display = 'none';
+				errorMessage.visibility = 'hidden';
+			}
+
+			function validateAllMustFields(event) {
+
+				var fields = $('.mustFill');
+
+				var error, firstErroneousField;
+				for (i=0; i<fields.length; i++) {
+					console.log(fields[i]);
+					error = getValidationError(fields[i]);
+					if (error) {
+						showError(fields[i], error);
+						if (!firstErroneousField) {
+							firstErroneousField = fields[i]
+						}
+					}
+				}
+
+				if (firstErroneousField) {
+					event.target.preventDefault()
+					firstErroneousField.focus()
+				}else {
+					//init firebase sign up
+				}
+
+			}
+
+			function initSignUp() {
+
+				var mail = $mailFieldInsideSignup.val()
+				var password = $passwordFieldInsideSignup.val()                   //dont forget using first and last name (registering them to the database among other user detalis)
+				auth.createUserWithEmailAndPassword(mail, password).catch(function(error) {
+					// Handle Errors here.
+					console.log("about to submit - but error")
+					var errorCode = error.code;
+					var errorMessage = error.message;
+					console.log(errorMessage)
+					// ...
+				});
+			}
+
+			function initLogIn() {
+
+				var mail = $mailFieldInsideSignup.val()
+				var password = $passwordFieldInsideSignup.val() 
+
+				//handle mail and pass not evnetered!!!!!!!
+
+				/*const promise = */auth.signInWithEmailAndPassword(email, password).catch(function(error) {
+				// Handle Errors here.
+				var errorCode = error.code;
+				var errorMessage = error.message;
+				// ...
+				});
+			}
+
+			function resetUsersPassword(event) {
+				
+				let mail = $mailFieldInsideSignin.val();
+				if (!mail) {
+					alert('Mail address not entered');
+					event.preventDefault();
+				}
+				auth.sendPasswordResetEmail(mail).then(function() {
+			
+				}).catch(function(error) {
+					console.log(error.errorMessage);
+				});
+			}
+		});
+
+
+
+	</script>
+</body>
+</html>
